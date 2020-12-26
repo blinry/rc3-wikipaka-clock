@@ -553,9 +553,9 @@ function colorCycle(i)
     local speed = 0.05
 
     return {
-        0.5+0.5*math.cos(i*speed + 0),
-        0.5+0.5*math.cos(i*speed + TAU/3),
-        0.5+0.5*math.cos(i*speed + TAU*2/3),
+        0.8+0.2*math.cos(i*speed + 0),
+        0.8+0.2*math.cos(i*speed + TAU/3),
+        0.8+0.2*math.cos(i*speed + TAU*2/3),
     }
 end
 
