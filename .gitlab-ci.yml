@@ -1,0 +1,45 @@
+image: python:2.7-alpine
+
+variables:
+  LOVE_VERSION: "11.3"
+  LOVEJS_DIR: /tmp/love.js
+
+stages:
+- build
+- deploy
+
+build-love:
+  stage: build
+  before_script:
+  - apk update
+  - apk add curl
+  - apk add zip
+  - apk add unzip
+  script:
+  - zip -9 -r $CI_PROJECT_PATH_SLUG.love .
+  - curl --location https://github.com/love2d/love/releases/download/$LOVE_VERSION/love-$LOVE_VERSION-win64.zip --output love-win64.zip
+  - unzip love-win64.zip
+  - mkdir win64
+  - cp love-$LOVE_VERSION-win64/*.dll love-$LOVE_VERSION-win64/license.txt win64
+  - cat love-$LOVE_VERSION-win64/love.exe $CI_PROJECT_PATH_SLUG.love > win64/$CI_PROJECT_PATH_SLUG.exe
+  - cd win64
+  - zip -9 -r "../$CI_PROJECT_PATH_SLUG-win64.zip" .
+  artifacts:
+    paths:
+    - '*.love'
+    - '*-win64.zip'
+
+pages:
+  stage: deploy
+  script:
+  - mkdir public/
+  - mkdir public/downloads/
+  - mv $CI_PROJECT_PATH_SLUG.love public/downloads/
+  - mv $CI_PROJECT_PATH_SLUG-win64.zip public/downloads/
+  - cd public/downloads/
+  - for file in *; do echo "<li><a href=\"$file\">$file</a></li>" >> index.html; done
+  artifacts:
+    paths:
+    - public
+  only:
+  - postjam
