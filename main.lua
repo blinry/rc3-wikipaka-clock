@@ -1,48 +1,6 @@
 love.filesystem.setIdentity("radiant-rewind")
 
 local pathSeparator = package.config:sub(1,1)
-local configFileName = "inputconfig.lua"
-configFilePath = love.filesystem.getSaveDirectory() .. pathSeparator .. configFileName
-require("inputconfig")
-if love.filesystem.getRealDirectory(configFileName) == love.filesystem.getSaveDirectory() then
-    -- This file is in the save directory.
-    print("Opened custom " .. configFileName  .. " from " .. configFilePath)
-    contents, size = love.filesystem.read(configFileName)
-    -- if the player has an old version of the input config file, we need to patch in the new options for mute and/or effects
-    if not keymapping.mute then
-        keymapping.mute = {
-            mouseButtons = {},
-            keys = {"m"},
-            joystickButtons = {}
-        }
-        contents = contents:gsub("reload = {", [[mute = {
-        mouseButtons = {},
-        keys = {"m"},
-        joystickButtons = {}
-    }, 
-    reload = {]]);
-    end
-    if not keymapping.effects then
-        keymapping.effects = {
-            mouseButtons = {},
-            keys = {"e"},
-            joystickButtons = {}
-        }
-        contents = contents:gsub("reload = {", [[effects = {
-        mouseButtons = {},
-        keys = {"e"},
-        joystickButtons = {}
-    }, 
-    reload = {]]);
-    end
-    
-        
-    love.filesystem.write(configFileName, contents)
-else
-    print("Creating custom " .. configFileName .. " in " .. configFilePath)
-    contents, size = love.filesystem.read(configFileName)
-    love.filesystem.write(configFileName, contents)
-end
 
 require "lib.slam"
 vector = require "lib.hump.vector"
